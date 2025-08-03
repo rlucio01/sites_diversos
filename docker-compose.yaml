@@ -1,30 +1,19 @@
 version: "3.7"
 
 services:
-  email-capture:
-    image: nginx:alpine
-    volumes:
-      - email_capture_data:/usr/share/nginx/html:ro
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+  sites_diversos:
+    build: .
+    image: sites_diversos:latest
     networks:
       - RLnet
-    deploy:
-      mode: replicated
-      replicas: 1
-      placement:
-        constraints:
-          - node.role == manager
-      labels:
-        - traefik.enable=true
-        - traefik.http.routers.email-capture.rule=Host(`sites.rlucio.com`)
-        - traefik.http.routers.email-capture.entrypoints=websecure
-        - traefik.http.routers.email-capture.tls.certresolver=letsencryptresolver
-        - traefik.http.services.email-capture.loadbalancer.server.port=80
-        - traefik.http.services.email-capture.loadbalancer.passHostHeader=true
-
-volumes:
-  email_capture_data:
-    external: true
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.sites-diversos.rule=Host(`sites.rlucio.com`)
+      - traefik.http.routers.sites-diversos.entrypoints=websecure
+      - traefik.http.routers.sites-diversos.tls.certresolver=letsencryptresolver
+      - traefik.http.services.sites-diversos.loadbalancer.server.port=80
+      - traefik.http.services.sites-diversos.loadbalancer.passHostHeader=true
 
 networks:
   RLnet:
